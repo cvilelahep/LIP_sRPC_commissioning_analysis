@@ -78,22 +78,48 @@ for i_event, event in enumerate(data) :
 
         for i_strip in range(n_strips) :
             for i_plane in range(n_planes) :
-                if event[channelMap(i_plane, i_strip, 0, 1)] > q_hit_threshold and event[channelMap(i_plane, i_strip, 1, 1)] > q_hit_threshold :
+                if event[channelMap(i_plane, i_strip, I_F, I_Q)] > q_hit_threshold and event[channelMap(i_plane, i_strip, I_B, I_Q)] > q_hit_threshold :
                     strip.append(i_strip)
                     plane.append(i_plane)
-                    charge.append(event[channelMap(i_plane, i_strip, 0, 1)] + event[channelMap(i_plane, i_strip, 1, 1)])
-                    t_diff.append(event[channelMap(i_plane, i_strip, 0, 0)] - event[channelMap(i_plane, i_strip, 1, 0)])
+                    charge.append(event[channelMap(i_plane, i_strip, I_F, I_Q)] + event[channelMap(i_plane, i_strip, I_B, I_Q)])
+                    t_diff.append(event[channelMap(i_plane, i_strip, I_F, I_T)] - event[channelMap(i_plane, i_strip, I_B, I_T)])
 
+        
         fig = plt.figure()
-        ax = fig.add_subplot(projection = '3d')
+        #ax = fig.add_subplot(projection = '3d')
+
+        plt.subplot(2, 2, 1)
+        plt.scatter(strip, plane, c = charge)
+        plt.xlabel("Strip")
+        plt.xlim(-0.5, 16.5)
+        plt.ylabel("Plane")
+        plt.ylim(-0.5, 3.5)
+        
+        plt.subplot(2, 2, 2)
+        plt.scatter(t_diff, plane, c = charge)
+        plt.xlabel(r"$t_F - t_B$")
+        plt.xlim(-5, 15)
+        plt.ylabel("Plane")
+        plt.ylim(-0.5, 3.5)
+
+        plt.subplot(2, 2, 3)
+        plt.scatter(strip, t_diff, c = charge)
+        plt.xlabel("Strip")
+        plt.xlim(-0.5, 16.5)
+        plt.ylabel(r"$t_F - t_B$")
+        plt.ylim(-5, 15)
+
+        ax = plt.subplot(2, 2, 4, projection = "3d")
         ax.scatter(strip, t_diff, plane, c = charge)
         ax.set_xlabel("Strip")
         ax.set_ylabel(r"$t_F - t_B$")
         ax.set_zlabel("Plane")
 
-        ax.set_xlim(0, 16)
+        ax.set_xlim(-0.5, 16.5)
         ax.set_ylim(-5, 15)
-        ax.set_zlim(0, 3)
+        ax.set_zlim(-0.5, 3.5)
+
+        plt.tight_layout()
         plt.savefig("event_{}_3d_plot.png".format(i_event))
         plt.close()
 
