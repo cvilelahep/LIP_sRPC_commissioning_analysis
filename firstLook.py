@@ -1,5 +1,9 @@
 import numpy as np
 
+import houghTransform
+
+hough = houghTransform.hough(17*4, (0, 17), 120, (-np.pi*0.441, np.pi*0.441), 0, "normal", 1., -1)
+
 data = np.genfromtxt("dabc23292080012.dat")
 
 # Useful indices
@@ -84,12 +88,13 @@ for i_event, event in enumerate(data) :
                     charge.append(event[channelMap(i_plane, i_strip, I_F, I_Q)] + event[channelMap(i_plane, i_strip, I_B, I_Q)])
                     t_diff.append(event[channelMap(i_plane, i_strip, I_F, I_T)] - event[channelMap(i_plane, i_strip, I_B, I_T)])
 
+        hough_res = hough.fit(zip(strip, plane), False, False, charge)
         
         fig = plt.figure()
-        #ax = fig.add_subplot(projection = '3d')
 
         plt.subplot(2, 2, 1)
         plt.scatter(strip, plane, c = charge)
+        plt.plot([-0.5, 16.5], [-0.5*hough_res[0] + hough_res[1], 16.5*hough_res[0] + hough_res[1]])
         plt.xlabel("Strip")
         plt.xlim(-0.5, 16.5)
         plt.ylabel("Plane")
