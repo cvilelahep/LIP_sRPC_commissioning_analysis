@@ -150,8 +150,8 @@ def convertFile(f) :
 if tarfile.is_tarfile(args.input_file) :
     with tarfile.open(args.input_file) as tar :
         for member in tar.getmembers() :
-            tar.extract(member)
-            convertFile(member.name)
-            os.remove(member.name)
+            tar.extract(member, path = os.path.dirname(args.input_file))
+            convertFile(os.path.dirname(args.input_file)+os.sep+member.name)
+            os.remove(os.path.dirname(args.input_file)+os.sep+member.name)
 else :
     convertFile(args.input_file)
